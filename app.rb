@@ -14,13 +14,17 @@ class App < Sinatra::Base
 		slim(:homepage)
 	end
 
+	get '/create_notes' do
+		slim(:create_notes)
+	end
+
 	post '/login' do
 		username = params[:username]
 		password = params[:password]
 
 		id = login_user(username, password, open_database())
 		if id == -1 
-			return redirect('/login')
+			return redirect('/') 
 		else
 			return redirect('/homepage')
 		end
@@ -50,6 +54,30 @@ class App < Sinatra::Base
 		register_user(username, password, db)
 
 		return redirect('/')
+	end
+
+	get '/notes' do
+		if (session[:user_id])
+			db = open_database()
+
+			result = get_result() 
+			
+			slim(:notes, locals:{notes:result})
+		else
+			redirect('/homepage')
+		end
+	end
+
+	post '/create_notes' do
+		if session[:user_id]
+			db = open_database()
+			content = params["content"]
+
+			note = create_note()
+			redirect('/notes')
+		else
+			return redirect('/homepage') 
+		end
 	end
 
 	get '/logout' do

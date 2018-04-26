@@ -54,5 +54,13 @@ module Auth
     def is_logged_in()
         return get_user_id() != -1
     end
+
+    def get_result() 
+        result = db.execute("SELECT * FROM notes WHERE user_id=?", [session[:user_id]])
+    end
+
+    def create_note()
+        note = db.execute("INSERT INTO notes (user_id, content) VALUES (?,?)", [session[:user_id], content])
+    end
 end
 
