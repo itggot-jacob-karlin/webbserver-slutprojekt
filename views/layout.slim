@@ -8,4 +8,12 @@ html lang="en"
         link rel="stylesheet" href="/css/base.css"
         link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway"
     body
-        ==yield
+        header
+            .group
+                - if is_logged_in
+                    a href="/logout" Logout 
+                    a href="/create_notes" Create notes
+                - else
+                    a href="/login"
+        .content
+            ==yield
