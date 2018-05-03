@@ -55,12 +55,26 @@ module Auth
         return get_user_id() != -1
     end
 
-    def get_result() 
+    def get_result(db) 
         result = db.execute("SELECT * FROM notes WHERE user_id=?", [session[:user_id]])
     end
 
-    def create_note()
-        note = db.execute("INSERT INTO notes (user_id, content) VALUES (?,?)", [session[:user_id], content])
+    def create_note(db, content,id)
+        db.execute("INSERT INTO notes (user_id, content) VALUES (?,?)", [id, content])
     end
+
+    def get_result_note(db)
+        note_result = db.execute("SELECT user_id FROM notes WHERE id=?", [note_id])
+    end
+        
+
+    def delete_note(db)
+        if note_result.first["user_id"] == session[:user_id]
+            db.execute("DELETE FROM notes WHERE id=?", [note_id])
+            redirect('/homepage')
+        end
+    else
+        redirect('/homepage')
+    end 
 end
 

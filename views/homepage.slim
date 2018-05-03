@@ -1,1 +1,8 @@
 h1 Välkommen 
+.notes
+    - notes.each do |note|
+        .note-card
+            p = note["content"]
+            .note-controls
+                form action="delete_notes" method="POST"
+                    input.button type="submit" value="Delete"

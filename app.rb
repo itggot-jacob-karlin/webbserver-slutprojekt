@@ -10,10 +10,6 @@ class App < Sinatra::Base
 		slim(:login)
 	end
 
-	get '/homepage' do
-		slim(:homepage)
-	end
-
 	get '/create_notes' do
 		slim(:create_notes)
 	end
@@ -21,8 +17,8 @@ class App < Sinatra::Base
 	post '/login' do
 		username = params[:username]
 		password = params[:password]
-
 		id = login_user(username, password, open_database())
+		session[:id] = id
 		if id == -1 
 			return redirect('/') 
 		else
@@ -49,20 +45,17 @@ class App < Sinatra::Base
 		user = get_user_by_username(username, db)
 		if user != nil
 			puts "User with username '#{username}' already exists!"
-			return redirect('register')
+			return redirect('/register')
 		end
 		register_user(username, password, db)
-
 		return redirect('/')
 	end
 
-	get '/notes' do
+	get '/homepage' do
 		if (session[:user_id])
 			db = open_database()
-
-			result = get_result() 
-			
-			slim(:notes, locals:{notes:result})
+			result = get_result(db) 
+			slim(:homepage, locals:{notes:result})
 		else
 			redirect('/homepage')
 		end
@@ -72,9 +65,8 @@ class App < Sinatra::Base
 		if session[:user_id]
 			db = open_database()
 			content = params["content"]
-
-			note = create_note()
-			redirect('/notes')
+			note = create_note(db, content,session[:id])
+			redirect('/homepage')
 		else
 			return redirect('/homepage') 
 		end
@@ -83,5 +75,14 @@ class App < Sinatra::Base
 	get '/logout' do
 		logout_user()
 		return redirect('/') 
+	end
+
+	post '/delete_notes' do
+		if session[:user_id]
+			note_id = params[:id]
+			db = open_database()
+			db.to_s 
+			note_result = get_result(db)
+		end
 	end
 end           
